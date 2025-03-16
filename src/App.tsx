@@ -16,18 +16,20 @@ function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/payment-callback" element={<PaymentCallback />} />
-            <Route path="/payment-fallback" element={<PaymentFallback />} />
-            <Route path="/api-testing" element={<ApiTesting />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Router>
-        <Toaster />
+        <div className="min-h-screen w-full">
+          <Router>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/payment-callback" element={<PaymentCallback />} />
+              <Route path="/payment-fallback" element={<PaymentFallback />} />
+              <Route path="/api-testing" element={<ApiTesting />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Router>
+          <Toaster />
+        </div>
       </AuthProvider>
     </ThemeProvider>
   );

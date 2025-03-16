@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,7 +96,15 @@
     @apply border-border;
   }
 
+  html, body {
+    @apply w-full h-full m-0 p-0 overflow-x-hidden;
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  #root {
+    @apply min-h-screen w-full;
   }
 }
