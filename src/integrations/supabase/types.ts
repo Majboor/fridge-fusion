@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      documents: {
+        Row: {
+          content: Json | null
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payment_transactions: {
         Row: {
           amount: number
@@ -122,6 +149,7 @@ export type Database = {
       user_subscriptions: {
         Row: {
           created_at: string | null
+          free_trial_used: boolean | null
           id: string
           is_subscribed: boolean | null
           payment_reference: string | null
@@ -132,6 +160,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          free_trial_used?: boolean | null
           id?: string
           is_subscribed?: boolean | null
           payment_reference?: string | null
@@ -142,6 +171,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          free_trial_used?: boolean | null
           id?: string
           is_subscribed?: boolean | null
           payment_reference?: string | null

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -125,7 +125,7 @@ const Index = () => {
     if (hasUsedFreeGeneration && !hasActiveSubscription) {
       toast({
         title: "Free trial used",
-        description: "Please upgrade to our Starter Package for unlimited recipe generations.",
+        description: "You've already used your free recipe generation. Please upgrade to our Starter Package for unlimited generations.",
         variant: "destructive",
       });
       const pricingSection = document.getElementById('pricing');
@@ -188,24 +188,32 @@ const Index = () => {
         description: "Check out your personalized recipe cards."
       });
       
-      if (!hasUsedFreeGeneration) {
+      if (user && !hasUsedFreeGeneration && !hasActiveSubscription) {
         try {
+          console.log("Recording free recipe generation for user:", user.id);
           const { error } = await supabase
             .from('user_subscriptions')
             .upsert({
               user_id: user.id,
               is_subscribed: false,
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
+              free_trial_used: true
             });
           
           if (error) {
             console.error("Error recording recipe generation:", error);
           } else {
-            setHasUsedFreeGeneration(true);
+            console.log("Successfully recorded free recipe generation");
+            setHasUsedFreeGeneration(true); // Update state immediately to prevent multiple free uses
+            
+            localStorage.setItem('hasUsedFreeGeneration', 'true');
           }
         } catch (error) {
           console.error("Error recording recipe generation:", error);
         }
+      } else if (!user) {
+        localStorage.setItem('hasUsedFreeGeneration', 'true');
+        setHasUsedFreeGeneration(true); // Update state immediately to prevent multiple free uses
       }
     } catch (error) {
       console.error("Error in handleSubmit:", error);
@@ -638,7 +646,7 @@ const Index = () => {
                 </div>
                 <div className="p-4">
                   <h3 className="text-xl font-semibold mb-2 text-gray-800">{recipeItem.title}</h3>
-                  <p className="text-gray-600 text-sm">{recipeItem.ingredients}</p>
+                  <p className="text-gray-600">{recipeItem.ingredients}</p>
                 </div>
               </motion.div>
             ))}
@@ -775,49 +783,20 @@ const Index = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="max-w-3xl mx-auto text-center"
+            className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Cooking Experience?</h2>
-            <p className="text-xl mb-8 text-amber-100">
-              Stop wasting ingredients and discover delicious recipes tailored to what you already have.
+            <span className="inline-block px-3 py-1 bg-amber-800 text-white rounded-full text-sm font-medium mb-4">
+              Unlock Premium Features
+            </span>
+            <h2 className="text-4xl font-bold text-white mb-4">Choose Your Plan</h2>
+            <p className="text-xl text-amber-100 max-w-2xl mx-auto">
+              Get unlimited recipe generations and exclusive features with our premium plans.
             </p>
-            <Button 
-              className="bg-white text-amber-600 hover:bg-amber-50 hover:text-amber-700 text-lg py-6 px-8"
-              onClick={() => {
-                if (checkAuthAndProceed(() => {})) {
-                  const fileInput = document.getElementById('fridge-photo');
-                  if (fileInput) {
-                    fileInput.click();
-                  }
-                }
-              }}
-            >
-              Upload Your Fridge Photo Now
-            </Button>
           </motion.div>
+          
+          <PricingSection />
         </div>
       </section>
-
-      <PricingSection />
-
-      <footer className="py-12 bg-gray-900 text-gray-400">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold text-white mb-4">Fridge-to-Feast</h3>
-            <p className="mb-8 max-w-md mx-auto">
-              AI-powered recipe generation from your fridge contents. 
-              No more food waste, no more boring meals.
-            </p>
-            <div className="flex justify-center space-x-4 mb-8">
-              <a href="#" className="hover:text-white transition-colors">About</a>
-              <a href="#" className="hover:text-white transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms</a>
-              <a href="#" className="hover:text-white transition-colors">Contact</a>
-            </div>
-            <p className="text-sm">© {new Date().getFullYear()} Fridge-to-Feast. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
