@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -39,6 +40,33 @@ interface ApiResponse {
     recipe_image: string;
   };
 }
+
+// Sample fallback data for when the API fails
+const FALLBACK_RECIPE_DATA = {
+  fridge_contents: {
+    ingredients: [
+      "Chicken breast",
+      "Bell peppers",
+      "Onions",
+      "Garlic",
+      "Olive oil",
+      "Salt and pepper",
+      "Paprika",
+      "Rice"
+    ]
+  },
+  recipe: {
+    cards: [
+      { card: 1, content: "Easy Chicken Stir Fry" },
+      { card: 2, content: "Slice chicken breast into thin strips. Dice bell peppers and onions." },
+      { card: 3, content: "Heat olive oil in a pan. Add garlic and cook until fragrant." },
+      { card: 4, content: "Add chicken and cook until no longer pink, about 5-7 minutes." },
+      { card: 5, content: "Add vegetables and stir fry for 3-4 minutes until slightly softened." },
+      { card: 6, content: "Season with salt, pepper, and paprika. Serve over rice." }
+    ],
+    recipe_image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1173&q=80"
+  }
+};
 
 const Index = () => {
   const navigate = useNavigate();
@@ -159,26 +187,37 @@ const Index = () => {
       }
       
       console.log("Sending request to API...");
-      const response = await fetch('https://mealplan.techrealm.online/api/recipe', {
-        method: 'POST',
-        body: formData,
-      });
+      let data;
       
-      if (!response.ok) {
-        let errorMessage = 'Failed to generate recipe';
-        try {
-          const errorData = await response.json();
-          console.error("API error:", errorData);
-          errorMessage = errorData.error || errorMessage;
-        } catch (e) {
-          console.error("Error parsing error response:", e);
+      try {
+        const response = await fetch('https://mealplan.techrealm.online/api/recipe', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          let errorMessage = 'Failed to generate recipe';
+          try {
+            const errorData = await response.json();
+            console.error("API error:", errorData);
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            console.error("Error parsing error response:", e);
+          }
+          throw new Error(errorMessage);
         }
-        throw new Error(errorMessage);
+        
+        console.log("API response received, parsing...");
+        data = await response.json();
+        console.log("API response parsed:", data);
+      } catch (apiError) {
+        console.error("API request failed, using fallback data:", apiError);
+        toast({
+          title: "Using demo recipe",
+          description: "Our recipe API is currently unavailable. Showing you a sample recipe instead."
+        });
+        data = FALLBACK_RECIPE_DATA;
       }
-      
-      console.log("API response received, parsing...");
-      const data = await response.json();
-      console.log("API response parsed:", data);
       
       setRecipeData(data);
       setShowFlashcards(true);

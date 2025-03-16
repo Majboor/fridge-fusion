@@ -25,18 +25,34 @@ export default function Dashboard() {
 
     const fetchUserData = async () => {
       try {
-        // Use user_subscriptions to get usage count
+        // Get all user subscriptions for this user
         const { data: subData, error: subError } = await supabase
           .from('user_subscriptions')
           .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
+          .eq('user_id', user.id);
 
         if (subError) throw subError;
         
-        // Determine generation count based on subscription data
-        setGenerationCount(subData?.is_subscribed === false ? 1 : 0);
-        setSubscription(subData);
+        // Find a subscribed record if it exists
+        const activeSubscription = subData?.find(sub => sub.is_subscribed === true);
+        
+        if (activeSubscription) {
+          setSubscription(activeSubscription);
+          setGenerationCount(0); // For subscribed users
+        } else {
+          // Find a record with free_trial_used flag
+          const trialUsed = subData?.some(sub => sub.free_trial_used === true);
+          setGenerationCount(trialUsed ? 0 : 1);
+          
+          // Set the latest subscription record
+          if (subData && subData.length > 0) {
+            // Sort by created_at descending and get the latest
+            const latestSub = [...subData].sort((a, b) => 
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            )[0];
+            setSubscription(latestSub);
+          }
+        }
         
         // Get subscription details if needed
         if (hasActiveSubscription) {
@@ -44,7 +60,9 @@ export default function Dashboard() {
             .from('subscriptions')
             .select('*')
             .eq('user_id', user.id)
-            .maybeSingle();
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
 
           if (!activeSubError && activeSubData) {
             setSubscription(activeSubData);
@@ -122,7 +140,7 @@ export default function Dashboard() {
                       <Badge className="ml-2 bg-green-500 hover:bg-green-600">Active</Badge>
                     </p>
                     <p className="text-sm text-gray-500">
-                      Expires on: {formatDate(subscription?.expires_at)}
+                      Expires on: {formatDate(subscription?.expires_at || subscription?.subscription_end_date)}
                     </p>
                   </div>
                 </>
@@ -177,7 +195,7 @@ export default function Dashboard() {
                   <div className="flex justify-between items-center">
                     <p className="text-gray-700">Free Generations Remaining:</p>
                     <p className="font-medium text-gray-900">
-                      {generationCount === 0 ? "1" : "0"}
+                      {generationCount === 0 ? "0" : "1"}
                     </p>
                   </div>
                 )}

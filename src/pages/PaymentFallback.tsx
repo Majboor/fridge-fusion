@@ -18,8 +18,7 @@ export default function PaymentFallback() {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // This is a fallback key that would normally be stored securely
-  // It's a simple way to add some basic security to the fallback process
+  // This fallback key would normally be stored as an environment variable
   const FALLBACK_KEY = "payment-fallback-2024";
 
   useEffect(() => {
@@ -31,28 +30,37 @@ export default function PaymentFallback() {
     const paymentId = searchParams.get("ref") || searchParams.get("payment_id");
     const status = searchParams.get("status") || searchParams.get("result");
     
+    console.log("Payment fallback received params:", { paymentId, status });
+    
     if (!paymentId) {
       setError("No payment reference found in the URL");
       setIsLoading(false);
       return;
     }
 
-    // Just verify the parameters but don't process automatically
-    // We'll let the user confirm before processing
-    setIsLoading(false);
+    // If status is explicitly successful, attempt auto-verification
+    if (status === "success" || status === "Success" || status === "1" || status === "true") {
+      console.log("Status indicates success, auto-processing payment");
+      handleProcessPayment(paymentId);
+    } else {
+      // Just verify the parameters but don't process automatically
+      setIsLoading(false);
+    }
   }, [user, searchParams, navigate]);
 
-  const handleProcessPayment = async () => {
+  const handleProcessPayment = async (paymentIdOverride?: string) => {
     try {
       setIsProcessing(true);
       
-      const paymentId = searchParams.get("ref") || searchParams.get("payment_id");
+      const paymentId = paymentIdOverride || searchParams.get("ref") || searchParams.get("payment_id");
       
       if (!paymentId || !user) {
         setError("Missing payment information or user not authenticated");
         setIsProcessing(false);
         return;
       }
+
+      console.log(`Processing fallback payment for user: ${user.id} with paymentId: ${paymentId}`);
 
       // Call the fallback endpoint
       const { data, error } = await supabase.functions.invoke("payment-fallback", {
@@ -64,12 +72,14 @@ export default function PaymentFallback() {
       });
 
       if (error) {
-        console.error("Error verifying payment:", error);
+        console.error("Error calling payment-fallback function:", error);
         setIsSuccess(false);
         setError("Error verifying payment. Please contact support.");
         setIsProcessing(false);
         return;
       }
+
+      console.log("Fallback processing result:", data);
 
       if (data.success) {
         setIsSuccess(true);
@@ -157,7 +167,7 @@ export default function PaymentFallback() {
               {!error && (
                 <Button 
                   className="w-full bg-amber-600 hover:bg-amber-700"
-                  onClick={handleProcessPayment}
+                  onClick={() => handleProcessPayment()}
                   disabled={isProcessing}
                 >
                   {isProcessing ? "Processing..." : "Finalize Subscription"}

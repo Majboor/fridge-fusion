@@ -24,34 +24,42 @@ export default function PaymentCallback() {
 
     const verifyPayment = async () => {
       try {
+        console.log("Verifying payment with query params:", location.search);
         const queryParams = new URLSearchParams(location.search);
         const success = queryParams.get("success") === "true";
-        const paymentId = queryParams.get("id");
+        const paymentId = queryParams.get("id") || queryParams.get("payment_id");
 
-        if (!success || !paymentId) {
+        if (!paymentId) {
+          console.error("No payment ID found in redirect URL");
           setIsSuccess(false);
-          setError("Payment was not successful. Please try again.");
+          setError("Payment verification failed. No payment reference found.");
           setIsLoading(false);
           return;
         }
 
+        // Even if success param is false, we'll still verify the payment with our backend
+        // since sometimes the redirect params can be incorrect
+        console.log(`Verifying payment ID: ${paymentId} for user: ${user.id}`);
+
         // Call the Supabase Edge Function to verify and record the payment
-        const { data, error } = await supabase.functions.invoke("verify-payment", {
+        const { data, error: verifyError } = await supabase.functions.invoke("verify-payment", {
           body: { paymentId, userId: user.id },
         });
 
-        if (error) {
-          console.error("Error verifying payment:", error);
+        if (verifyError) {
+          console.error("Error calling verify-payment function:", verifyError);
           setIsSuccess(false);
           setError("Error verifying payment. Please contact support.");
           setIsLoading(false);
           return;
         }
 
+        console.log("Verification result:", data);
+
         if (data.success) {
           try {
-            // Record the payment in the database using the payment_transactions table
-            await supabase
+            // Record the payment in the database
+            const { error: dbError } = await supabase
               .from('payment_transactions')
               .insert({
                 user_id: user.id,
@@ -62,6 +70,11 @@ export default function PaymentCallback() {
                 payment_data: data
               });
     
+            if (dbError) {
+              console.error("Error recording payment transaction:", dbError);
+              // Continue anyway, as the subscription is already activated
+            }
+            
             setIsSuccess(true);
             toast({
               title: "Payment Successful",
@@ -73,6 +86,7 @@ export default function PaymentCallback() {
             setIsSuccess(true);
           }
         } else {
+          console.error("Payment verification failed:", data.message);
           setIsSuccess(false);
           setError(data.message || "Payment verification failed. Please try again.");
         }

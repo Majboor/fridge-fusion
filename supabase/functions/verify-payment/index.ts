@@ -7,7 +7,17 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 serve(async (req: Request) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
     // Parse the request body
     const { paymentId, userId } = await req.json();
@@ -18,11 +28,13 @@ serve(async (req: Request) => {
         success: false, 
         message: "Missing required parameters" 
       }), { 
-        headers: { "Content-Type": "application/json" }, 
+        headers: { ...corsHeaders, "Content-Type": "application/json" }, 
         status: 400 
       });
     }
 
+    console.log(`Processing payment verification for userId: ${userId} with paymentId: ${paymentId}`);
+    
     // For a real implementation, you would make a request to your payment provider API
     // to verify the payment status using the paymentId
     // For example: const paymentVerification = await fetch('https://pay.techrealm.pk/api/verify-payment/' + paymentId)
@@ -36,44 +48,98 @@ serve(async (req: Request) => {
       const expiresAt = new Date();
       expiresAt.setMonth(expiresAt.getMonth() + 1); // 1 month subscription
       
-      const { error: subscriptionError } = await supabase
+      // Check if user already has an active subscription
+      const { data: existingSubscription } = await supabase
         .from('subscriptions')
-        .upsert({
-          user_id: userId,
-          is_active: true,
-          payment_reference: paymentId,
-          created_at: now.toISOString(),
-          updated_at: now.toISOString(),
-          expires_at: expiresAt.toISOString(),
-          amount: 14 // $14
-        });
+        .select('*')
+        .eq('user_id', userId)
+        .eq('is_active', true)
+        .maybeSingle();
       
-      if (subscriptionError) {
-        console.error("Error creating subscription:", subscriptionError);
-        return new Response(JSON.stringify({ 
-          success: false, 
-          message: "Error activating subscription",
-          error: subscriptionError
-        }), { 
-          headers: { "Content-Type": "application/json" },
-          status: 500 
-        });
+      if (existingSubscription) {
+        console.log(`User ${userId} already has an active subscription. Extending it.`);
+        // If subscription exists, extend it
+        const newExpiresAt = new Date(existingSubscription.expires_at);
+        newExpiresAt.setMonth(newExpiresAt.getMonth() + 1);
+        
+        const { error: updateError } = await supabase
+          .from('subscriptions')
+          .update({
+            updated_at: now.toISOString(),
+            expires_at: newExpiresAt.toISOString(),
+            payment_reference: paymentId,
+          })
+          .eq('id', existingSubscription.id);
+        
+        if (updateError) {
+          console.error("Error updating subscription:", updateError);
+          throw new Error("Error extending subscription");
+        }
+      } else {
+        // Create new subscription
+        const { error: subscriptionError } = await supabase
+          .from('subscriptions')
+          .insert({
+            user_id: userId,
+            is_active: true,
+            payment_reference: paymentId,
+            created_at: now.toISOString(),
+            updated_at: now.toISOString(),
+            expires_at: expiresAt.toISOString(),
+            amount: 14, // $14
+            status: 'active'
+          });
+        
+        if (subscriptionError) {
+          console.error("Error creating subscription:", subscriptionError);
+          throw new Error("Error creating subscription");
+        }
       }
       
       // Also update the user_subscriptions record
-      const { error: userSubError } = await supabase
+      const { data: userSubData, error: userSubFetchError } = await supabase
         .from('user_subscriptions')
-        .upsert({
-          user_id: userId,
-          is_subscribed: true,
-          payment_reference: paymentId,
-          subscription_start_date: now.toISOString(),
-          subscription_end_date: expiresAt.toISOString(),
-          updated_at: now.toISOString()
-        });
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
       
-      if (userSubError) {
-        console.error("Error updating user subscription record:", userSubError);
+      if (userSubFetchError) {
+        console.error("Error fetching user subscription:", userSubFetchError);
+      }
+      
+      // Determine if we need to insert or update
+      if (userSubData) {
+        // Update existing record
+        const { error: userSubError } = await supabase
+          .from('user_subscriptions')
+          .update({
+            is_subscribed: true,
+            payment_reference: paymentId,
+            subscription_start_date: now.toISOString(),
+            subscription_end_date: expiresAt.toISOString(),
+            updated_at: now.toISOString()
+          })
+          .eq('user_id', userId);
+        
+        if (userSubError) {
+          console.error("Error updating user subscription record:", userSubError);
+        }
+      } else {
+        // Insert new record
+        const { error: userSubError } = await supabase
+          .from('user_subscriptions')
+          .insert({
+            user_id: userId,
+            is_subscribed: true,
+            payment_reference: paymentId,
+            subscription_start_date: now.toISOString(),
+            subscription_end_date: expiresAt.toISOString(),
+            updated_at: now.toISOString()
+          });
+        
+        if (userSubError) {
+          console.error("Error creating user subscription record:", userSubError);
+        }
       }
       
       return new Response(JSON.stringify({ 
@@ -81,7 +147,7 @@ serve(async (req: Request) => {
         message: "Subscription activated successfully",
         expiresAt: expiresAt.toISOString()
       }), { 
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200 
       });
     } else {
@@ -89,7 +155,7 @@ serve(async (req: Request) => {
         success: false, 
         message: "Payment verification failed" 
       }), { 
-        headers: { "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400 
       });
     }
@@ -100,7 +166,7 @@ serve(async (req: Request) => {
       message: "Server error",
       error: error.message
     }), { 
-      headers: { "Content-Type": "application/json" }, 
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, 
       status: 500 
     });
   }
