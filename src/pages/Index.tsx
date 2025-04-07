@@ -289,16 +289,16 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
       <div className="fixed top-0 right-0 p-4 z-50 flex space-x-2">
         {user ? (
           <Button 
             onClick={() => navigate("/dashboard")}
             variant="outline"
-            className={`bg-white flex items-center ${hasActiveSubscription ? 'border-purple-300' : ''}`}
+            className={`bg-white flex items-center ${hasActiveSubscription ? 'border-green-300' : ''}`}
           >
             {hasActiveSubscription && (
-              <Crown className="mr-1 h-4 w-4 text-purple-600" />
+              <Crown className="mr-1 h-4 w-4 text-green-600" />
             )}
             <User className="mr-1 h-4 w-4" />
             {hasActiveSubscription ? 'Premium Dashboard' : 'Dashboard'}
@@ -357,8 +357,8 @@ const Index = () => {
                 )}
                 
                 {currentCardIndex > 0 && (
-                  <div className="bg-amber-50 p-6 flex flex-col justify-center">
-                    <h4 className="text-lg font-medium text-amber-800 mb-4">Ingredients:</h4>
+                  <div className="bg-green-50 p-6 flex flex-col justify-center">
+                    <h4 className="text-lg font-medium text-green-800 mb-4">Ingredients:</h4>
                     <ul className="list-disc pl-5 space-y-2">
                       {recipeData.fridge_contents.ingredients.map((ingredient, i) => (
                         <li key={i} className="text-gray-700">{ingredient}</li>
@@ -369,7 +369,7 @@ const Index = () => {
                 
                 <div className="p-8 flex flex-col justify-center">
                   <div className="mb-4">
-                    <span className="text-xs font-medium text-amber-600">
+                    <span className="text-xs font-medium text-green-600">
                       Card {currentCardIndex + 1} of {recipeData.recipe.cards.length}
                     </span>
                   </div>
@@ -400,7 +400,7 @@ const Index = () => {
                   {recipeData.recipe.cards.map((_, index) => (
                     <div 
                       key={index}
-                      className={`w-2 h-2 rounded-full ${index === currentCardIndex ? 'bg-amber-600' : 'bg-gray-300'}`}
+                      className={`w-2 h-2 rounded-full ${index === currentCardIndex ? 'bg-green-600' : 'bg-gray-300'}`}
                     />
                   ))}
                 </div>
@@ -428,10 +428,10 @@ const Index = () => {
             transition={{ duration: 0.7 }}
             className="max-w-4xl mx-auto text-center"
           >
-            <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-medium mb-4">
+            <span className="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4">
               Introducing Fridge-to-Feast
               {hasActiveSubscription && (
-                <span className="ml-2 inline-flex items-center bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs">
+                <span className="ml-2 inline-flex items-center bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs">
                   <Crown className="h-3 w-3 mr-1" /> Premium
                 </span>
               )}
@@ -443,10 +443,10 @@ const Index = () => {
               transition={{ delay: 0.2, duration: 0.7 }}
               className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 mb-6"
             >
-              Transform Your <span className="text-amber-600">Fridge Contents</span> Into Delicious Meals
+              Transform Your <span className="text-green-600">Fridge Contents</span> Into Delicious Meals
               {hasActiveSubscription && (
                 <span className="inline-block ml-2">
-                  <Sparkles className="h-8 w-8 inline text-purple-500" />
+                  <Sparkles className="h-8 w-8 inline text-green-500" />
                 </span>
               )}
             </motion.h1>
@@ -460,7 +460,7 @@ const Index = () => {
               Upload a photo of what's in your fridge, and our AI will generate personalized recipes 
               tailored to the ingredients you already have. No waste, endless possibilities.
               {hasActiveSubscription && (
-                <span className="ml-1 text-purple-600 font-medium"> Enjoy your premium access!</span>
+                <span className="ml-1 text-green-600 font-medium"> Enjoy your premium access!</span>
               )}
             </motion.p>
             
@@ -468,14 +468,14 @@ const Index = () => {
               initial={{ opacity: 0, scale: 0.95 }} 
               animate={{ opacity: 1, scale: 1 }} 
               transition={{ delay: 0.4, duration: 0.5 }}
-              className={`bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto ${hasActiveSubscription ? 'border-2 border-purple-200' : ''}`}
+              className={`bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto ${hasActiveSubscription ? 'border-2 border-green-200' : ''}`}
             >
               {hasActiveSubscription && (
                 <div className="mb-4 -mt-2 flex justify-center">
-                  <Badge className="bg-purple-600 flex items-center gap-1 py-1 px-3">
+                  <Badge className="bg-green-600 flex items-center gap-1 py-1 px-3">
                     <Crown className="h-3.5 w-3.5" />
                     <span>Premium Access</span>
-                    <span className="bg-white text-purple-600 text-xs rounded-full px-1.5 ml-1">Unlimited</span>
+                    <span className="bg-white text-green-600 text-xs rounded-full px-1.5 ml-1">Unlimited</span>
                   </Badge>
                 </div>
               )}
@@ -489,7 +489,7 @@ const Index = () => {
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="fridge-photo" className="text-gray-700">Choose an image</Label>
-                    <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 h-52 flex flex-col items-center justify-center text-center transition-all hover:border-amber-300 cursor-pointer">
+                    <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 h-52 flex flex-col items-center justify-center text-center transition-all hover:border-green-300 cursor-pointer">
                       <Input
                         type="file"
                         id="fridge-photo"
@@ -511,7 +511,7 @@ const Index = () => {
                           }
                         }}
                       >
-                        <Upload className="h-10 w-10 text-amber-500 mb-3" />
+                        <Upload className="h-10 w-10 text-green-500 mb-3" />
                         <span className="text-gray-800 font-medium">
                           {file ? file.name : "Drag & drop or click to browse"}
                         </span>
@@ -522,7 +522,7 @@ const Index = () => {
                     </div>
                     <button 
                       onClick={handleDemoImage}
-                      className="text-sm text-amber-600 hover:text-amber-800 font-medium flex items-center justify-center mx-auto mt-2"
+                      className="text-sm text-green-600 hover:text-green-800 font-medium flex items-center justify-center mx-auto mt-2"
                     >
                       <FileImage className="w-4 h-4 mr-1" /> Use demo image instead
                     </button>
@@ -551,7 +551,7 @@ const Index = () => {
               <Button 
                 onClick={handleSubmit}
                 disabled={isLoading}
-                className="w-full py-6 text-lg font-medium bg-amber-600 hover:bg-amber-700 text-white"
+                className="w-full py-6 text-lg font-medium bg-green-600 hover:bg-green-700 text-white"
               >
                 {isLoading ? (
                   "Processing your ingredients... (This may take 30+ seconds)"
@@ -593,17 +593,17 @@ const Index = () => {
           >
             {[
               {
-                icon: <Camera className="h-8 w-8 text-amber-600" />,
+                icon: <Camera className="h-8 w-8 text-green-600" />,
                 title: "Capture Your Ingredients",
                 description: "Take a photo of your fridge or pantry contents using your smartphone or upload an existing image."
               },
               {
-                icon: <UtensilsCrossed className="h-8 w-8 text-amber-600" />,
+                icon: <UtensilsCrossed className="h-8 w-8 text-green-600" />,
                 title: "AI Recipe Creation",
                 description: "Our advanced AI identifies ingredients and generates personalized recipes based on what you have."
               },
               {
-                icon: <Globe className="h-8 w-8 text-amber-600" />,
+                icon: <Globe className="h-8 w-8 text-green-600" />,
                 title: "Cook & Enjoy",
                 description: "Follow our step-by-step recipe cards to create delicious meals from ingredients you already have."
               }
@@ -611,7 +611,7 @@ const Index = () => {
               <motion.div
                 key={index}
                 variants={item}
-                className="bg-amber-50 rounded-2xl p-8 hover:shadow-md transition-shadow"
+                className="bg-green-50 rounded-2xl p-8 hover:shadow-md transition-shadow"
               >
                 <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
                   {step.icon}
@@ -624,7 +624,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 bg-amber-50">
+      <section className="py-24 bg-green-50">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -633,7 +633,7 @@ const Index = () => {
             transition={{ duration: 0.7 }}
             className="text-center mb-16"
           >
-            <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-medium mb-4">
+            <span className="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4">
               Fan Favorites
             </span>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Top Kitchen Creations</h2>
@@ -693,7 +693,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 bg-gradient-to-br from-white to-amber-50">
+      <section className="py-24 bg-gradient-to-br from-white to-green-50">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -745,7 +745,7 @@ const Index = () => {
                     />
                   </div>
                   <div className="p-8">
-                    <span className="text-sm font-medium text-amber-600 mb-2 block">{culture.culture} Cuisine</span>
+                    <span className="text-sm font-medium text-green-600 mb-2 block">{culture.culture} Cuisine</span>
                     <h3 className="text-2xl font-bold mb-3 text-gray-800">{culture.title}</h3>
                     <p className="text-gray-600 mb-4">{culture.description}</p>
                     <div className="flex flex-wrap gap-2">
@@ -815,7 +815,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-amber-600 text-white">
+      <section className="py-20 bg-green-600 text-white">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -824,11 +824,11 @@ const Index = () => {
             transition={{ duration: 0.7 }}
             className="text-center mb-16"
           >
-            <span className="inline-block px-3 py-1 bg-amber-800 text-white rounded-full text-sm font-medium mb-4">
+            <span className="inline-block px-3 py-1 bg-green-800 text-white rounded-full text-sm font-medium mb-4">
               Unlock Premium Features
             </span>
             <h2 className="text-4xl font-bold text-white mb-4">Choose Your Plan</h2>
-            <p className="text-xl text-amber-100 max-w-2xl mx-auto">
+            <p className="text-xl text-green-100 max-w-2xl mx-auto">
               Get unlimited recipe generations and exclusive features with our premium plans.
             </p>
           </motion.div>

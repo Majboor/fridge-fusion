@@ -1,35 +1,52 @@
 
-# This is a Supabase CLI configuration file.
-# For full documentation, visit: https://supabase.com/docs/guides/cli/config
-
-project_id = "rnxkknyghjfaetynbyaz"
+# This file configures Supabase (https://create.supabase.com/). 
+# For detailed instructions, visit: https://supabase.com/docs/guides/local-development
 
 [api]
-enabled = true
+# API port
 port = 54321
-schemas = ["public", "storage", "graphql_public"]
+# API endpoint base URL
+schemas = ["public", "storage", "graphql_public", "realtime"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
 
 [db]
+# Database port
 port = 54322
-
-[studio]
-port = 54323
-
-[inbucket]
-port = 54324
-
-[auth]
-enabled = true
+shadow_port = 54320
+major_version = 15
 
 [realtime]
 enabled = true
 
+[studio]
+# Studio port
+port = 54323
+
+[inbucket]
+# Inbucket port
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
 [storage]
+# File storage port
 enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+# JWT secret key
+enabled = true
+site_url = "https://example.com"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
 
 [functions]
-[functions.verify-payment]
-verify_jwt = true
-
-[functions.payment-fallback]
-verify_jwt = true
+enabled = true

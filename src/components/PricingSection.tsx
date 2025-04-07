@@ -111,31 +111,31 @@ export const PricingSection = () => {
   };
 
   return (
-    <section id="pricing" className="py-24 bg-gray-50">
+    <section id="pricing" className="py-24 bg-green-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold text-foreground mb-4">Simple, Transparent Pricing</h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Choose the perfect plan for your cooking journey
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <Card className="p-8">
+          <Card className="p-8 border border-border">
             <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Free Trial</h3>
-              <div className="text-4xl font-bold mb-6">$0</div>
-              <ul className="text-left space-y-4 mb-8">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">Free Trial</h3>
+              <div className="text-4xl font-bold mb-6 text-foreground">$0</div>
+              <ul className="text-left space-y-4 mb-8 text-foreground">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500 h-5 w-5" />
+                  <CheckCircle2 className="text-primary h-5 w-5" />
                   <span>1 Recipe Generation</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500 h-5 w-5" />
+                  <CheckCircle2 className="text-primary h-5 w-5" />
                   <span>Basic Recipe Details</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500 h-5 w-5" />
+                  <CheckCircle2 className="text-primary h-5 w-5" />
                   <span>AI-Powered Ingredient Analysis</span>
                 </li>
               </ul>
@@ -149,25 +149,25 @@ export const PricingSection = () => {
             </div>
           </Card>
 
-          <Card className="p-8 bg-amber-50 border-amber-200">
+          <Card className="p-8 bg-green-100 border-primary/20">
             <div className="text-center">
-              <h3 className="text-xl font-semibold mb-2">Starter Package</h3>
-              <div className="text-4xl font-bold mb-6">$14</div>
-              <ul className="text-left space-y-4 mb-8">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">Starter Package</h3>
+              <div className="text-4xl font-bold mb-6 text-foreground">$14</div>
+              <ul className="text-left space-y-4 mb-8 text-foreground">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500 h-5 w-5" />
+                  <CheckCircle2 className="text-primary h-5 w-5" />
                   <span>Unlimited Recipe Generations</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500 h-5 w-5" />
+                  <CheckCircle2 className="text-primary h-5 w-5" />
                   <span>Detailed Recipe Instructions</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500 h-5 w-5" />
+                  <CheckCircle2 className="text-primary h-5 w-5" />
                   <span>Advanced AI Analysis</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="text-green-500 h-5 w-5" />
+                  <CheckCircle2 className="text-primary h-5 w-5" />
                   <span>Priority Support</span>
                 </li>
               </ul>
@@ -181,7 +181,7 @@ export const PricingSection = () => {
                 </Button>
               ) : (
                 <Button 
-                  className="w-full bg-amber-600 hover:bg-amber-700" 
+                  className="w-full" 
                   onClick={user ? handleSubscribe : handleLoginRedirect}
                   disabled={isLoading}
                 >
