@@ -14,11 +14,16 @@ import Goals from "@/pages/Goals";
 import Settings from "@/pages/Settings";
 import { NotificationsProvider } from "./contexts/NotificationsContext";
 import NotFound from "@/pages/NotFound";
+import Index from "@/pages/Index";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Auth />,
+    element: <Index />,
+  },
+  {
+    path: "/home",
+    element: <Index />,
   },
   {
     path: "/auth",
