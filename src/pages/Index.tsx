@@ -1,11 +1,9 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -25,6 +23,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { PricingSection } from "@/components/PricingSection";
 import { supabase } from "@/integrations/supabase/client";
+import KeyFeatures from "@/components/KeyFeatures";
+import FeaturedFeature from "@/components/FeaturedFeature";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface RecipeCard {
   card: number;
@@ -41,7 +42,6 @@ interface ApiResponse {
   };
 }
 
-// Sample fallback data for when the API fails
 const FALLBACK_RECIPE_DATA = {
   fridge_contents: {
     ingredients: [
@@ -566,6 +566,30 @@ const Index = () => {
         </div>
       </section>
 
+      <KeyFeatures />
+
+      <FeaturedFeature
+        title="Snap & Cook: From Fridge to Feast in Seconds"
+        description="Simply upload a photo of your ingredients, and our AI instantly identifies what you have and generates personalized recipes that maximize what's already in your kitchen. No more food waste or recipe hunting."
+        image="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=1974&auto=format&fit=crop"
+        imageAlt="Phone taking picture of food ingredients"
+      />
+
+      <FeaturedFeature
+        title="Nutrition Tailored Just for You"
+        description="Our AI learns your dietary preferences, health goals, and restrictions to deliver perfectly personalized meal suggestions. Get nutrition insights and recommendations based on your unique health profile."
+        image="https://images.unsplash.com/photo-1505576399279-565b52d4ac71?q=80&w=1935&auto=format&fit=crop"
+        imageAlt="Personalized meal planning"
+        direction="right"
+      />
+
+      <FeaturedFeature
+        title="Turn Healthy Eating into a Fun Game"
+        description="Earn badges, complete challenges, and track your progress as you explore new ingredients and recipes. Compete with friends and climb the leaderboards while developing healthier eating habits."
+        image="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=1974&auto=format&fit=crop"
+        imageAlt="App gamification features"
+      />
+
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <motion.div 
@@ -624,7 +648,7 @@ const Index = () => {
         </div>
       </section>
 
-      <section className="py-24 bg-green-50">
+      <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -657,7 +681,7 @@ const Index = () => {
               },
               {
                 title: "Veggie Stir Fry",
-                image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=580",
+                image: "https://images.unsplash.com/photo-1512171427422-2228b022b32f?q=80&w=580",
                 ingredients: "Broccoli, carrots, bell peppers, soy sauce"
               },
               {
@@ -702,7 +726,7 @@ const Index = () => {
             transition={{ duration: 0.7 }}
             className="text-center mb-16"
           >
-            <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
+            <span className="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4">
               Global Flavors
             </span>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Culinary Journey Around the World</h2>
